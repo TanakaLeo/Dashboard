@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: detections-backend
+    env: python
+    rootDir: Dashboard/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: CORS_ORIGINS
+        value: https://detections-dashboard.onrender.com
+
+  - type: static_site
+    name: detections-dashboard
+    rootDir: Dashboard/React
+    buildCommand: npm ci && npm run build && npm run export
+    publishDir: out
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE
+        value: https://detections-backend.onrender.com
