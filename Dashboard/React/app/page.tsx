@@ -44,7 +44,7 @@ const sortAscByTs  = (a: Detection, b: Detection) => tsToMs(a.timestamp) - tsToM
   // Buscar dados reais da API Flask
 const fetchDetections = async () => {
   try {
-    const res = await fetch("https://dashboard-k9g1.onrender.com/api/detections");
+    const res = await fetch("/api/detections");
     const data: Detection[] = await res.json();
 
     const sortedData = [...data].sort((a, b) => 
@@ -85,7 +85,7 @@ const fetchDetections = async () => {
     }
 
     try {
-      await fetch("https://dashboard-k9g1.onrender.com/detections", {
+      await fetch("/detections", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
