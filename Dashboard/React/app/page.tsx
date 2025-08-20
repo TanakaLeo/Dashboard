@@ -61,7 +61,7 @@ const fetchDetections = async () => {
       chartDataSorted
         .slice(-20)
         .map((d) => ({ 
-            time: d.timestamp.split(" ")[1],
+            time: d.timestamp.split("T")[1].substring(0,8),
             tempo: d.tempoInferencia 
         }))
     );

@@ -2,8 +2,12 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from datetime import datetime
 import os
+import logging
 
-app = Flask(__name__, static_folder="out", static_url_path="")
+logging.basicConfig(level=logging.INFO)
+
+static_dir = os.path.join(os.path.dirname(__file__), '..', 'React', 'out')
+app = Flask(__name__, static_folder=static_dir)
 CORS(app)
 
 ultimas_deteccoes = []
@@ -34,7 +38,7 @@ def receber_deteccao():
     if len(ultimas_deteccoes) > 20:
         ultimas_deteccoes.pop()
 
-    print(f"[{timestamp}] Objetos: {objetos} ({tempo}ms)")
+    app.logger.info(f"Objetos recebidos: {objetos} ({tempo}ms)")
     return jsonify({"status": "recebido"}), 200
 
 # API para listar as detecções (GET)
@@ -65,9 +69,13 @@ def listar_deteccoes():
     return jsonify(resposta)
 
 # Serve arquivos estáticos (js, css, etc.)
+@app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
-def static_proxy(path):
-    return send_from_directory(app.static_folder, path)
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
