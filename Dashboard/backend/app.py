@@ -44,12 +44,12 @@ def receber_deteccao():
 # API para listar as detecções (GET)
 @app.route("/api/detections", methods=["GET"])
 def listar_deteccoes():
+    classes_corretas = ["caixa","frasco","blister"]
     resposta = []
     for i, det in enumerate(ultimas_deteccoes):
         for obj in det["objetos"]:
-            is_correct = not obj["classe"].endswith("_avaria")
-            
             classe_nome = obj["classe"]
+            is_correct = (classe_nome in classes_corretas)
             categoria_final = "Desconhecida"
             if "blister" in classe_nome:
                 categoria_final = "Blister"
